@@ -14,6 +14,19 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Debug key presence
+        shell: bash
+        env:
+          KEY: ${{ secrets.SERVER_SSH_KEY }}
+          USER: ${{ secrets.SERVER_USER }}
+          HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          set -euo pipefail
+          echo "USER=$USER"
+          echo "HOST=$HOST"
+          echo "KEY_LENGTH=${#KEY}"
+          echo "$KEY" | head -n 2
+
       - name: Upload project to server
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -23,6 +36,7 @@ jobs:
           source: "."
           target: "/var/www/affp"
           rm: true
+          debug: true
 
       - name: SSH and deploy with Docker
         uses: appleboy/ssh-action@v0.1.6
