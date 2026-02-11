@@ -1,0 +1,28 @@
+vich_uploader:
+  db_driver: orm
+  mappings:
+
+    media_upload:
+      uri_prefix: /uploads/media
+      upload_destination: '%kernel.project_dir%/public/uploads/media'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+    event_upload:
+      uri_prefix: /uploads/events
+      upload_destination: '%kernel.project_dir%/public/uploads/events'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+    article_card_upload:
+      uri_prefix: /uploads/article-cards
+      upload_destination: '%kernel.project_dir%/public/uploads/article-cards'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+    dossier_upload:
+      uri_prefix: /uploads/dossiers
+      upload_destination: '%kernel.project_dir%/public/uploads/dossiers'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+
+    destination_upload:
+      uri_prefix: /uploads/destinations
+      upload_destination: '%kernel.project_dir%/public/uploads/destinations'
+      namer: Vich\UploaderBundle\Naming\SmartUniqueNamer 

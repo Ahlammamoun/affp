@@ -1,0 +1,5 @@
+{
+    "require": {
+        "symfony/brevo-mailer": "^7.4"
+    }
+}
