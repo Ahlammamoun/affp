@@ -1,6 +1,9 @@
+version: "3.8"
+
 services:
-  db:
+  db-affp:
     image: mariadb:11.4
+    container_name: db-affp
     restart: unless-stopped
     environment:
       MARIADB_DATABASE: affp
@@ -9,92 +12,67 @@ services:
       MARIADB_ROOT_PASSWORD: root_password_change_me
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - affp_network
 
-
-  worker:
+  symfony-backend-affp:
     build: ./backend
+    container_name: symfony-backend-affp
     restart: unless-stopped
-
     environment:
       APP_ENV: prod
       APP_DEBUG: "0"
-      DATABASE_URL: "mysql://affp:affp_password_change_me@db:3306/affp?serverVersion=mariadb-11.4.0&charset=utf8mb4"
-      MAILER_DSN: "brevo+api://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@default"
-      FRONTEND_URL: "http://localhost"
+      DATABASE_URL: "mysql://affp:affp_password_change_me@db-affp:3306/affp?serverVersion=mariadb-11.4.0&charset=utf8mb4"
+      STRIPE_SECRET_KEY: "CHANGE_ME"
+      STRIPE_PRICE_ID: "CHANGE_ME"
+      STRIPE_WEBHOOK_SECRET: "CHANGE_ME"
+      MAILER_DSN: "CHANGE_ME"
+      FRONTEND_URL: "https://africafactspress.com"
     depends_on:
-      - db
+      - db-affp
     volumes:
       - ./backend:/var/www/html
       - media_uploads:/var/www/html/public/uploads
-    command: ["php", "bin/console", "messenger:consume", "async", "-vv", "--time-limit=3600", "--memory-limit=256M"]
-
-
-
-
-
-  backend:
-    build: ./backend
-    restart: unless-stopped
- 
-    environment:
-      APP_ENV: dev
-      APP_DEBUG: "1"
-      DATABASE_URL: "mysql://affp:affp_password_change_me@db:3306/affp?serverVersion=mariadb-11.4.0&charset=utf8mb4"
-       # ✅ STRIPE
-      STRIPE_SECRET_KEY: "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"
-      # STRIPE_PRICE_ID: "price_1SxqaEK9Q2TyiugcRUeYNped"
-      STRIPE_PRICE_ID: "price_1SxrNBK9Q2TyiugcWpfUFP4n"
-      STRIPE_WEBHOOK_SECRET: "whsec_c5ae9f6b4aca4df1f60988395550e05832e85b5e1c46eb6e7cb0b3ffafd061ce"
-      # optionnel (si tu ne fais pas l'origin dynamique)
-      FRONTEND_URL: "http://localhost"
-      MAILER_DSN: "brevo+api://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@default"
-      # pour la prochaine étape webhook
-      networks:
-      - affp_network
-      - default
-    depends_on:
-      - db
-    volumes:
-      - ./backend:/var/www/html
-      - media_uploads:/var/www/html/public/uploads
-
-  frontend:
-    build: ./frontend
-    restart: unless-stopped
-    environment:
-      NEXT_PUBLIC_API_BASE_URL: "/api"
-      SERVER_API: "http://nginx/api"
     networks:
       - affp_network
-      - default
+
+  worker-affp:
+    build: ./backend
+    container_name: worker-affp
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      DATABASE_URL: "mysql://affp:affp_password_change_me@db-affp:3306/affp?serverVersion=mariadb-11.4.0&charset=utf8mb4"
+      MAILER_DSN: "brevo+api://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@default"
+      FRONTEND_URL: "https://africafactspress.com"
+    depends_on:
+      - db-affp
+    volumes:
+      - ./backend:/var/www/html
+      - media_uploads:/var/www/html/public/uploads
+    command: ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600", "--memory-limit=256M"]
+    networks:
+      - affp_network
+
+  react-frontend-affp:
+    build: ./frontend
+    container_name: react-frontend-affp
+    restart: unless-stopped
+    environment:
+      NODE_ENV: "production"
+      NEXT_PUBLIC_API_BASE_URL: "/api"
     command: ["npm", "run", "start", "--", "-p", "3000"]
     depends_on:
-      - backend
-
-
-
-  nginx:
-    image: nginx:1.27-alpine
-    restart: unless-stopped
-    ports:
-      - "80"
+      - symfony-backend-affp
     networks:
       - affp_network
-      - default  
-    depends_on:
-      - frontend
-      - backend
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./backend/public:/var/www/html/public:ro
-      - media_uploads:/var/www/html/public/uploads:ro
 
 volumes:
   db_data:
   media_uploads:
-  frontend_node_modules:
-  frontend_next_cache:
 
-  networks:
+networks:
   affp_network:
     external: true
+
