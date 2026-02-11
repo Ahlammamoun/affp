@@ -11,59 +11,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Write SSH key file
+      - name: Setup SSH key
         shell: bash
         run: |
           set -e
-          KEY_FILE="${RUNNER_TEMP}/id_ed25519"
-          echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d > "$KEY_FILE"
-          chmod 644 "$KEY_FILE"
-          echo "KEY_FILE=$KEY_FILE" >> $GITHUB_ENV
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Debug SSH with OpenSSH
+      - name: Upload project (rsync)
         shell: bash
         run: |
           set -e
-          ls -l "${RUNNER_TEMP}/id_ed25519"
-          ssh-keygen -lf "${RUNNER_TEMP}/id_ed25519" || true
-          ssh -i "${RUNNER_TEMP}/id_ed25519" \
-            -o StrictHostKeyChecking=no \
-            -o IdentitiesOnly=yes \
-            -p 22 \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo OK"
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -p 22" \
+            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/affp/
 
-      - name: Test SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          port: 22
-          key_path: /github/runner_temp/id_ed25519
-          script: |
-            echo "SSH OK"
-
-      - name: Upload project
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          port: 22
-          key_path: /github/runner_temp/id_ed25519
-          source: "."
-          target: "/var/www/affp"
-          rm: true
-
-      - name: Deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          port: 22
-          key_path: /github/runner_temp/id_ed25519
-          script: |
+      - name: Deploy on server
+        shell: bash
+        run: |
+          set -e
+          ssh -i ~/.ssh/id_ed25519 -p 22 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} <<'EOF'
             set -e
             cd /var/www/affp
             docker compose down || true
             docker compose up -d --build
             docker image prune -f
+          EOF
 
