@@ -57,6 +57,9 @@ jobs:
             set -e
             cd /var/www/affp
 
+            # Ensure external docker network exists (required by docker-compose.yml)
+            docker network inspect affp_network >/dev/null 2>&1 || docker network create affp_network
+
             # Use docker-compose (v1) if present, else fall back to docker compose (v2)
             if command -v docker-compose >/dev/null 2>&1; then
               docker-compose down || true
