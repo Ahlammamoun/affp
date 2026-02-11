@@ -9,44 +9,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@v4
 
-      - name: Debug key presence
+      - name: Install SSH key
         shell: bash
         env:
-          KEY: ${{ secrets.SERVER_SSH_KEY }}
-          USER: ${{ secrets.SERVER_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           HOST: ${{ secrets.SERVER_HOST }}
         run: |
           set -euo pipefail
-          echo "USER=$USER"
-          echo "HOST=$HOST"
-          echo "KEY_LENGTH=${#KEY}"
-          echo "$KEY" | head -n 2
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
 
-      - name: Upload project to server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "."
-          target: "/var/www/affp"
-          rm: true
-          debug: true
+          # write key exactly as provided
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
-      - name: SSH and deploy with Docker
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
+          # known_hosts
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+
+          # quick auth test (no password allowed)
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes -o PreferredAuthentications=publickey -p 22 ubuntu@"$HOST" 'echo OK'
+
+      - name: Upload project with rsync
+        shell: bash
+        env:
+          HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          set -euo pipefail
+          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./ ubuntu@"$HOST":/var/www/affp/
+
+      - name: Deploy on server
+        shell: bash
+        env:
+          HOST: ${{ secrets.SERVER_HOST }}
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -p 22 ubuntu@"$HOST" <<'EOF'
             set -e
             cd /var/www/affp
             docker compose down || true
             docker compose up -d --build
             docker image prune -f
+          EOF
