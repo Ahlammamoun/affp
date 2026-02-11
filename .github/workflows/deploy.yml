@@ -11,14 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Decode SSH key to env
-        id: key
+      - name: Write SSH key file
         shell: bash
         run: |
           set -e
-          echo "SSH_KEY<<EOF" >> $GITHUB_ENV
-          echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          KEY_FILE="${RUNNER_TEMP}/id_ed25519"
+          echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
+          echo "KEY_FILE=$KEY_FILE" >> $GITHUB_ENV
 
       - name: Test SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -26,7 +26,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           port: 22
-          key: ${{ env.SSH_KEY }}
+          key_path: /github/runner_temp/id_ed25519
           script: |
             echo "SSH OK"
 
@@ -36,7 +36,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           port: 22
-          key: ${{ env.SSH_KEY }}
+          key_path: /github/runner_temp/id_ed25519
           source: "."
           target: "/var/www/affp"
           rm: true
@@ -47,10 +47,11 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           port: 22
-          key: ${{ env.SSH_KEY }}
+          key_path: /github/runner_temp/id_ed25519
           script: |
             set -e
             cd /var/www/affp
             docker compose down || true
             docker compose up -d --build
             docker image prune -f
+
