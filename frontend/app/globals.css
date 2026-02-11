@@ -1,0 +1,670 @@
+:root {
+  --bg: #0b0b0f;
+  --panel: #11111a;
+  --text: #f4f4f7;
+  --muted: #b8b8c3;
+  --line: rgba(255, 255, 255, .08);
+  --accent: #ff6a00;
+  --accent2: #ff8a33;
+  --max: 1200px;
+}
+
+* {
+  box-sizing: border-box
+}
+
+/* ✅ AUCUN scroll horizontal sur tout le site */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none
+}
+
+.container {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+/* ===== HEADER ===== */
+.topbar {
+  background: linear-gradient(180deg, rgba(255, 106, 0, .12), rgba(255, 106, 0, 0));
+  border-bottom: 1px solid var(--line);
+
+}
+
+.navMain {
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px
+}
+
+.brandTitle {
+  font-weight: 900;
+  font-size: 22px
+}
+
+.brandTag {
+  font-size: 12px;
+  color: var(--muted)
+}
+
+.navLinks {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--muted)
+}
+
+.actions {
+  display: flex;
+  gap: 10px
+}
+
+.btn {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 13px
+}
+
+.btnPrimary {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border: 0;
+  color: #111;
+  font-weight: 800
+}
+.btn:hover {
+  border-color: rgba(255, 106, 0, .55);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.brandTag {
+  margin-top: 4px;
+}
+
+/* ===== SECTIONS (✅ plus de scroll horizontal) ===== */
+.sectionBar {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, .02)
+}
+
+.sectionBarInner {
+  display: flex;
+  flex-wrap: wrap;
+  /* ✅ retour à la ligne */
+  gap: 10px;
+  padding: 10px 0;
+  overflow: visible;
+  /* ✅ pas de scroll */
+}
+
+.pill {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  margin-left: 9px;
+}
+
+/* ===== CADRES ===== */
+.frame {
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid var(--line);
+}
+
+.frameHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line)
+}
+
+.frameTitle {
+  font-weight: 900;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .6px
+}
+
+.frameLink {
+  font-size: 12px;
+  color: var(--muted)
+}
+
+.frameBody {
+  padding: 14px
+}
+
+.kicker {
+  color: var(--accent2);
+  font-weight: 900;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .4px
+}
+
+.titleXL {
+  margin: 10px 0 0;
+  font-size: 30px;
+  line-height: 1.15
+}
+
+.meta {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px
+}
+
+/* ✅ textes longs ne doivent jamais pousser la largeur */
+.frame,
+.listItem,
+.cardTitle,
+.adTitle,
+.adText,
+.hCard,
+.adSlide {
+  overflow-wrap: anywhere;
+}
+
+/* ===== LAYOUT (✅ anti overflow grid) ===== */
+.pageGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, .7fr);
+  gap: 16px;
+  padding: 22px 0 30px;
+}
+
+.stack {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  /* ✅ obligatoire en grid */
+}
+
+/* ===== LISTES ===== */
+.list {
+  display: grid;
+  gap: 10px
+}
+
+.listItem {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.smallMuted {
+  display: block;
+  color: var(--muted);
+  font-size: 12px
+}
+
+/* ===== SCROLL VERTICAL (OK) ===== */
+.scrollBox {
+  max-height: 460px;
+  overflow: auto;
+  padding-right: 6px
+}
+
+.scrollRow {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line)
+}
+
+.timeTag {
+  font-weight: 900;
+  color: var(--accent);
+  font-size: 12px
+}
+
+.badge {
+  border: 1px solid var(--line);
+  font-size: 11px;
+  padding: 3px 6px;
+  margin-right: 6px
+}
+
+.badgeAlert {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-align: center;
+  width: fit-content;
+  width: 43px;
+}
+
+/* =====like==== */
+.likePill {
+  background: transparent;
+  all: unset;
+  /* color: #fff; */
+  padding: 6px 12px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.likePill i {
+  font-size: 16px;
+}
+
+/* Sections pleine largeur sous la grille */
+.fullSection {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+/* ===== CARTES ===== */
+.cards {
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* ✅ */
+  gap: 14px
+}
+
+.cardPad {
+  padding: 14px
+}
+
+.cardTitle {
+  margin-top: 8px;
+  font-weight: 900;
+  line-height: 1.25
+}
+
+.cardDesc {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5
+}
+
+/* ===== DOSSIERS (✅ plus de scroll horizontal) ===== */
+.hScroll {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.hCard {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .04)
+}
+
+.hCardInner {
+  padding: 12px
+}
+
+/* Live ticker (sans scrollbar, avec flèches) */
+.liveBox {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.liveControls {
+  display: grid;
+  gap: 8px;
+}
+
+.arrowBtn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .04);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.arrowBtn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.liveList {
+  border-left: 1px solid var(--line);
+  padding-left: 10px;
+  min-width: 0;
+}
+
+/* Grille pub (si tu l’utilises ailleurs) */
+.adGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media(max-width:1050px) {
+  .adGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.adCard {
+  display: block;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .03);
+  padding: 14px;
+}
+
+.adCard:hover {
+  border-color: rgba(255, 106, 0, .55);
+}
+
+.adBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  padding: 3px 6px;
+  color: var(--muted);
+}
+
+.adTitle {
+  margin-top: 10px;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.adText {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.adCta {
+  margin-top: 12px;
+  color: var(--accent2);
+  font-weight: 900;
+  font-size: 13px;
+}
+
+
+
+/* Badge au-dessus du texte + aération */
+.liveText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* espace badge -> titre */
+  min-width: 0;
+}
+
+.liveTitle {
+  line-height: 1.4;
+  /* texte moins serré */
+  word-break: break-word;
+}
+
+
+
+/* Zone commerciale */
+
+
+.zoneCommerciale .adCarousel {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.zoneCommerciale .adViewport {
+  overflow: hidden;
+  /* ✅ coupe, donc pas de scroll horizontal */
+  width: 100%;
+  min-width: 0;
+}
+
+
+
+
+/* ✅ en ligne, NE WRAP PAS */
+.zoneCommerciale .adTrack {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 12px;
+  will-change: transform;
+  transition: transform .6s ease;
+}
+
+/* ✅ 3 cartes visibles desktop */
+.zoneCommerciale .adSlide {
+  flex: 0 0 calc((100% - 24px) / 3);
+  min-width: 0;
+  /* ⚠️ enlève ton min-width:240 qui force le wrap */
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .03);
+  padding: 14px;
+  display: block;
+}
+
+.zoneCommerciale .adSlide:hover {
+  border-color: rgba(255, 106, 0, .55);
+}
+
+/* ✅ 1 carte visible mobile */
+@media (max-width: 900px) {
+  .zoneCommerciale .adSlide {
+    flex: 0 0 100%;
+  }
+}
+
+/* button logout*/
+/* formulaire register*/
+/* ===== AUTH (connexion / abonnement) ===== */
+.authWrap{
+  padding: 34px 0 50px;
+  display: grid;
+  place-items: center;
+}
+
+.authCard{
+  width: 100%;
+  max-width: 520px;
+}
+
+.authTitle{
+  margin: 8px 0 0;
+  font-size: 26px;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.authMeta{
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 46ch;
+}
+
+.authForm{
+  display: grid;
+  gap: 12px;
+}
+
+.authField{
+  display: grid;
+  gap: 6px;
+}
+
+.authInput{
+  width: 100%;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  color: var(--text);
+  padding: 11px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.authInput:focus{
+  border-color: rgba(255, 106, 0, .55);
+}
+
+.authError{
+  border: 1px solid rgba(255, 106, 0, .35);
+  background: rgba(255, 106, 0, .08);
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.authActions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+@media (max-width: 520px){
+  .authCard{ max-width: 100%; }
+  .authActions > *{ width: 100%; }
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, .02);
+  padding: 28px 0;
+  color: var(--muted)
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 20px;
+}
+
+.small {
+  margin-top: 18px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, .45)
+}
+
+/* zone de petites card*/
+.commGrid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 50px;
+}
+
+.commWrap{
+  padding: 0 14px; /* même que .frameBody */
+}
+
+/* même look que .zoneCommerciale .adSlide */
+.commCard{
+  display:block;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .03);
+  padding: 14px;
+  border-radius: 0;     /* ✅ pas d'arrondi */
+  min-width: 0;
+}
+
+.commCard:hover{
+  border-color: rgba(255, 106, 0, .55);
+}
+
+/* image dans la card, sans arrondi */
+.commImg{
+  width: 100%;
+  aspect-ratio: 16 / 9;   /* ← LE CADRE */
+  object-fit: cover;
+  object-position: center;
+  display: block;
+
+}
+
+.commImgEmpty{
+  aspect-ratio: 16 / 9;   /* même ratio */
+  border: 1px dashed var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: var(--muted);
+}
+
+/* responsive */
+@media (max-width: 900px){
+  .commGrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px){
+  .commGrid{ grid-template-columns: 1fr; }
+}
+
+
+
+
+
+
+@media(max-width:1050px) {
+  .pageGrid {
+    grid-template-columns: 1fr
+  }
+
+  .navLinks {
+    display: none
+  }
+
+  .cards {
+    grid-template-columns: 1fr
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr
+  }
+
+  @media (max-width: 640px) {
+    .frame .cardPad {
+      flex-direction: column;
+    }
+
+    .frame .cardPad>a,
+    .frame .cardPad>div:first-child {
+      max-width: 100% !important;
+      flex: 0 0 auto !important;
+      height: auto;
+    }
+  }
+
+}
