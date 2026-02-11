@@ -1,25 +1,35 @@
-name: Deploy to VPS
+name: Deploy to VPS on prod branch
 
 on:
   push:
-    branches:
-      - main
+    branches: [prod]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy via SSH
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload project to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "."
+          target: "/var/www/affp"
+          rm: false
+
+      - name: SSH and deploy with Docker
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
           script: |
-            cd /var/www/affp   # chemin de ton projet sur le serveur
-            git pull origin main
-            docker compose down
+            cd /var/www/affp
+            docker compose down || true
             docker compose up -d --build
             docker image prune -f

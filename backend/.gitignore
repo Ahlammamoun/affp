@@ -8,6 +8,11 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+/backend/vendor/
+/backend/var/
+/frontend/node_modules/
+/frontend/.next/
+/.env
 
 ###> phpunit/phpunit ###
 /phpunit.xml
