@@ -17,7 +17,7 @@ jobs:
           set -e
           KEY_FILE="${RUNNER_TEMP}/id_ed25519"
           echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d > "$KEY_FILE"
-          chmod 600 "$KEY_FILE"
+          chmod 644 "$KEY_FILE"
           echo "KEY_FILE=$KEY_FILE" >> $GITHUB_ENV
 
       - name: Test SSH
