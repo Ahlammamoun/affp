@@ -49,8 +49,9 @@ services:
       FRONTEND_URL: "http://localhost"
       MAILER_DSN: "brevo+api://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@default"
       # pour la prochaine étape webhook
-  
-
+      networks:
+      - affp_network
+      - default
     depends_on:
       - db
     volumes:
@@ -63,8 +64,9 @@ services:
     environment:
       NEXT_PUBLIC_API_BASE_URL: "/api"
       SERVER_API: "http://nginx/api"
-
-    
+    networks:
+      - affp_network
+      - default
     command: ["npm", "run", "start", "--", "-p", "3000"]
     depends_on:
       - backend
@@ -75,7 +77,10 @@ services:
     image: nginx:1.27-alpine
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "80"
+    networks:
+      - affp_network
+      - default  
     depends_on:
       - frontend
       - backend
