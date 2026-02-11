@@ -19,9 +19,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # sanitize HOST (remove CR/LF, spaces, ssh://, and accidental :port)
           HOST="$(printf '%s' "$HOST_RAW" | tr -d '\r\n' | sed 's#^ssh://##' | sed 's/:22$//')"
-
           echo "HOST_RAW=$(printf '%s' "$HOST_RAW" | cat -A)"
           echo "HOST=$HOST"
 
@@ -55,10 +53,18 @@ jobs:
           set -euo pipefail
           HOST="$(printf '%s' "$HOST_RAW" | tr -d '\r\n' | sed 's#^ssh://##' | sed 's/:22$//')"
 
-          ssh -i ~/.ssh/id_ed25519 -p 22 ubuntu@"$HOST" <<'EOF'
+          ssh -T -i ~/.ssh/id_ed25519 -p 22 ubuntu@"$HOST" <<'EOF'
             set -e
             cd /var/www/affp
-            docker compose down || true
-            docker compose up -d --build
+
+            # Use docker-compose (v1) if present, else fall back to docker compose (v2)
+            if command -v docker-compose >/dev/null 2>&1; then
+              docker-compose down || true
+              docker-compose up -d --build
+            else
+              docker compose down || true
+              docker compose up -d --build
+            fi
+
             docker image prune -f
           EOF
