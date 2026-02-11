@@ -22,11 +22,13 @@ jobs:
 
       - name: Upload project (rsync)
         shell: bash
+        env:
+          HOST: ${{ secrets.SERVER_HOST }}
+          USER: ${{ secrets.SERVER_USER }}
         run: |
           set -e
-          rsync -az --delete \
-            -e "ssh -i ~/.ssh/id_ed25519 -p 22" \
-            ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/affp/
+          rsync -az --delete -e "ssh -i ~/.ssh/id_ed25519 -p 22" ./ "${USER}@${HOST}:/var/www/affp/"
+
 
       - name: Deploy on server
         shell: bash
