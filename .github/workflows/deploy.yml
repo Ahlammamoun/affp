@@ -20,6 +20,18 @@ jobs:
           chmod 644 "$KEY_FILE"
           echo "KEY_FILE=$KEY_FILE" >> $GITHUB_ENV
 
+      - name: Debug SSH with OpenSSH
+        shell: bash
+        run: |
+          set -e
+          ls -l "${RUNNER_TEMP}/id_ed25519"
+          ssh-keygen -lf "${RUNNER_TEMP}/id_ed25519" || true
+          ssh -i "${RUNNER_TEMP}/id_ed25519" \
+            -o StrictHostKeyChecking=no \
+            -o IdentitiesOnly=yes \
+            -p 22 \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo OK"
+
       - name: Test SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
