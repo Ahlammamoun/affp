@@ -89,3 +89,7 @@ volumes:
   media_uploads:
   frontend_node_modules:
   frontend_next_cache:
+
+  networks:
+  affp_network:
+    external: true
