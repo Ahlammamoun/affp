@@ -20,7 +20,8 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "."
           target: "/var/www/affp"
-          rm: false
+          debug: true
+
 
       - name: SSH and deploy with Docker
         uses: appleboy/ssh-action@v1.0.3
