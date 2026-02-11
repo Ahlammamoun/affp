@@ -11,14 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Prepare SSH key
+      - name: Prepare SSH key (from base64)
         shell: bash
         run: |
           set -e
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          mkdir -p .github/ssh
+          echo "${{ secrets.SERVER_SSH_KEY_B64 }}" | base64 -d > .github/ssh/id_ed25519
+          chmod 600 .github/ssh/id_ed25519
 
       - name: Test SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -26,7 +25,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           port: 22
-          key_path: /github/home/.ssh/id_ed25519
+          key_path: /github/workspace/.github/ssh/id_ed25519
           script: |
             echo "SSH OK"
 
@@ -36,7 +35,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           port: 22
-          key_path: /github/home/.ssh/id_ed25519
+          key_path: /github/workspace/.github/ssh/id_ed25519
           source: "."
           target: "/var/www/affp"
           rm: true
@@ -47,7 +46,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           port: 22
-          key_path: /github/home/.ssh/id_ed25519
+          key_path: /github/workspace/.github/ssh/id_ed25519
           script: |
             set -e
             cd /var/www/affp
